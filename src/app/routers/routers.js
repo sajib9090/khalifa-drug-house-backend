@@ -24,12 +24,19 @@ import {
 import {
   handleCreateMedicine,
   handleDeleteMedicine,
+  handleGetMedicineById,
   handleGetMedicines,
 } from "../controllers/medicineControllers.js";
 import {
   handleCreateSoldInvoice,
   handleGetSingleSoldInvoice,
+  handleGetSoldInvoices,
 } from "../controllers/soldInvoiceControllers.js";
+import {
+  handleCreatePurchaseInvoice,
+  handleGetPurchaseInvoices,
+  handleGetSinglePurchaseInvoice,
+} from "../controllers/purchaseControllers.js";
 
 export const apiRouter = express.Router();
 
@@ -73,6 +80,7 @@ apiRouter.delete("/companies/delete/:id", isLoggedIn, handleDeleteCompany);
 //medicines
 apiRouter.post("/medicines/medicine-create", isLoggedIn, handleCreateMedicine);
 apiRouter.get("/medicines", isLoggedIn, handleGetMedicines);
+apiRouter.get("/medicines/get-medicine/:id", isLoggedIn, handleGetMedicineById);
 apiRouter.delete("/medicines/delete/:id", isLoggedIn, handleDeleteMedicine);
 
 //sold invoices
@@ -86,3 +94,17 @@ apiRouter.get(
   isLoggedIn,
   handleGetSingleSoldInvoice
 );
+apiRouter.get("/sold-invoices", isLoggedIn, handleGetSoldInvoices);
+
+//purchase
+apiRouter.post(
+  "/purchase-invoices/invoice-create",
+  isLoggedIn,
+  handleCreatePurchaseInvoice
+);
+apiRouter.get(
+  "/purchase-invoices/get-single/:id",
+  isLoggedIn,
+  handleGetSinglePurchaseInvoice
+);
+apiRouter.get("/purchase-invoices", isLoggedIn, handleGetPurchaseInvoices);

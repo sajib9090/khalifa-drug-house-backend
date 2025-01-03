@@ -180,11 +180,22 @@ export const handleGetMedicines = async (req, res, next) => {
     medicines = await findQuery.toArray();
 
     const count = await medicinesCollection.countDocuments(query);
+    const all = await medicinesCollection.find(query).toArray();
+
+    let totalSellValue = 0;
+    let totalPurchaseValue = 0;
+
+    all?.forEach((medicine) => {
+      totalSellValue += medicine?.stock * medicine?.sell_price;
+      totalPurchaseValue += medicine?.stock * medicine?.purchase_price;
+    });
 
     res.status(200).send({
       success: true,
       message: "Data retrieved successfully",
       data_found: count,
+      total_purchase_value: totalPurchaseValue,
+      total_sales_value: totalSellValue,
       pagination: limit
         ? {
             totalPages: Math.ceil(count / limit),
@@ -194,6 +205,31 @@ export const handleGetMedicines = async (req, res, next) => {
           }
         : null,
       data: medicines,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const handleGetMedicineById = async (req, res, next) => {
+  const { id } = req.params;
+  const user = req.user.user ? req.user.user : req.user;
+  try {
+    if (!ObjectId.isValid(id)) {
+      throw createError(400, "Invalid id");
+    }
+
+    const existingItem = await medicinesCollection.findOne({
+      $and: [{ _id: new ObjectId(id) }, { pharmacy_id: user?.pharmacy_id }],
+    });
+
+    if (!existingItem) {
+      throw createError(404, "Item not found");
+    }
+    res.status(200).send({
+      success: true,
+      message: "Medicine retrieved successfully",
+      data: existingItem,
     });
   } catch (error) {
     next(error);

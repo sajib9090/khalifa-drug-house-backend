@@ -13,3 +13,4 @@ export const medicinesCollection = client.db(db_name).collection("medicines");
 export const soldInvoicesCollection = client
   .db(db_name)
   .collection("sold-invoices");
+export const purchaseCollection = client.db(db_name).collection("purchase");

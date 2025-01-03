@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb";
 import {
   medicinesCollection,
-  soldInvoicesCollection,
+  purchaseCollection,
 } from "../collections/collections.js";
 import createError from "http-errors";
 import validator from "validator";
 
-export const handleCreateSoldInvoice = async (req, res, next) => {
+export const handleCreatePurchaseInvoice = async (req, res, next) => {
   const { total_discount, sub_total_bill, final_bill, items } = req.body;
   const user = req.user.user ? req.user.user : req.user;
 
@@ -42,7 +42,7 @@ export const handleCreateSoldInvoice = async (req, res, next) => {
     };
 
     // Insert the invoice
-    const result = await soldInvoicesCollection.insertOne(newInvoice);
+    const result = await purchaseCollection.insertOne(newInvoice);
 
     if (!result?.insertedId) {
       throw createError(500, "Failed to create invoice.");
@@ -56,7 +56,7 @@ export const handleCreateSoldInvoice = async (req, res, next) => {
       return {
         updateOne: {
           filter: { _id: itemId },
-          update: { $inc: { stock: -item?.s_quantity } },
+          update: { $inc: { stock: item?.p_quantity } },
         },
       };
     });
@@ -75,7 +75,7 @@ export const handleCreateSoldInvoice = async (req, res, next) => {
       });
     } catch (bulkError) {
       // Rollback: delete the invoice if stock update fails
-      await soldInvoicesCollection.deleteOne({ _id: result.insertedId });
+      await purchaseCollection.deleteOne({ _id: result.insertedId });
       throw createError(
         500,
         "Failed to update stock. Invoice creation rolled back."
@@ -86,7 +86,7 @@ export const handleCreateSoldInvoice = async (req, res, next) => {
   }
 };
 
-export const handleGetSingleSoldInvoice = async (req, res, next) => {
+export const handleGetSinglePurchaseInvoice = async (req, res, next) => {
   const { id } = req.params;
   const user = req.user.user ? req.user.user : req.user;
 
@@ -98,7 +98,7 @@ export const handleGetSingleSoldInvoice = async (req, res, next) => {
     const objectId = new ObjectId(id);
 
     // Perform aggregation to lookup `createdBy` information
-    const invoiceData = await soldInvoicesCollection
+    const invoiceData = await purchaseCollection
       .aggregate([
         {
           $match: {
@@ -139,7 +139,7 @@ export const handleGetSingleSoldInvoice = async (req, res, next) => {
   }
 };
 
-export const handleGetSoldInvoices = async (req, res, next) => {
+export const handleGetPurchaseInvoices = async (req, res, next) => {
   const user = req.user.user ? req.user.user : req.user;
   const { date, start_date, end_date, month } = req.query;
   const page = Number(req.query.page) || 1;
@@ -208,17 +208,17 @@ export const handleGetSoldInvoices = async (req, res, next) => {
       query.createdAt = { $gte: startOfMonth, $lte: endOfMonth };
     }
 
-    const soldInvoices = await soldInvoicesCollection
+    const purchaseInvoices = await purchaseCollection
       .find(query)
       .limit(limit)
       .skip((page - 1) * limit)
       .toArray();
 
-    const count = await soldInvoicesCollection.countDocuments(query);
+    const count = await purchaseCollection.countDocuments(query);
 
     res.status(200).send({
       success: true,
-      message: "Sold invoices retrieved successfully",
+      message: "Purchase invoices retrieved successfully",
       data_found: count,
       pagination: {
         totalPages: Math.ceil(count / limit),
@@ -226,7 +226,7 @@ export const handleGetSoldInvoices = async (req, res, next) => {
         previousPage: page > 1 ? page - 1 : null,
         nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
       },
-      data: soldInvoices,
+      data: purchaseInvoices,
     });
   } catch (error) {
     next(error);
