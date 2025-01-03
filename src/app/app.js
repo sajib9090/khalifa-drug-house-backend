@@ -22,7 +22,7 @@ const limiter = rateLimit({
 // Middleware setup
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://khalifa-drug-house.web.app"],
     credentials: true,
     optionsSuccessStatus: 200,
   })
