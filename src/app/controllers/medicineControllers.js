@@ -80,6 +80,7 @@ export const handleCreateMedicine = async (req, res, next) => {
         { medicine_name: processedMedicineName },
         { dosage_form: dosage_form },
         { strength: strength },
+        { company: company },
       ],
     });
 
