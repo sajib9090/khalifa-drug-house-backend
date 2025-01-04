@@ -7,7 +7,14 @@ import createError from "http-errors";
 import validator from "validator";
 
 export const handleCreateSoldInvoice = async (req, res, next) => {
-  const { total_discount, sub_total_bill, final_bill, items } = req.body;
+  const {
+    total_discount,
+    sub_total_bill,
+    final_bill,
+    items,
+    status,
+    customer_mobile,
+  } = req.body;
   const user = req.user.user ? req.user.user : req.user;
 
   const parseNumber = (value, fieldName) => {
@@ -31,12 +38,37 @@ export const handleCreateSoldInvoice = async (req, res, next) => {
     const parsedSubTotalBill = parseNumber(sub_total_bill, "Subtotal");
     const parsedFinalBill = parseNumber(final_bill, "Final bill");
 
+    // Validate customer_mobile based on status
+    let validatedCustomerMobile = null;
+    if (status === "due") {
+      if (!customer_mobile || typeof customer_mobile !== "string") {
+        throw createError(
+          400,
+          "Customer mobile is required when status is due."
+        );
+      }
+
+      if (!validator.isMobilePhone(customer_mobile, "any")) {
+        throw createError(400, "Customer mobile must be a valid phone number.");
+      }
+
+      validatedCustomerMobile = customer_mobile;
+    } else if (customer_mobile) {
+      // Validate customer mobile if provided, even if not required
+      if (!validator.isMobilePhone(customer_mobile, "any")) {
+        throw createError(400, "Customer mobile must be a valid phone number.");
+      }
+      validatedCustomerMobile = customer_mobile;
+    }
+
     const newInvoice = {
       pharmacy_id: user?.pharmacy_id,
       total_discount: parsedTotalDiscount,
       sub_total_bill: parsedSubTotalBill,
       final_bill: parsedFinalBill,
       items,
+      status: status || "paid",
+      customer_mobile: validatedCustomerMobile,
       createdBy: user?._id,
       createdAt: new Date(),
     };
