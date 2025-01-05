@@ -209,7 +209,7 @@ export const handleLoginUser = async (req, res, next) => {
       }
     }
 
-    const accessToken = await createJWT(userObject, jwtAccessToken, "10m");
+    const accessToken = await createJWT(userObject, jwtAccessToken, "1d");
 
     const refreshToken = await createJWT(userObject, jwtRefreshToken, "7d");
 
@@ -268,7 +268,7 @@ export const handleRefreshToken = async (req, res, next) => {
     const accessToken = await createJWT(
       { user: decodedToken },
       jwtAccessToken,
-      "10m"
+      "1d"
     );
     // Update req.user with the new decoded user information
     req.user = decodedToken.user;
