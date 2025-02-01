@@ -100,3 +100,35 @@ export const handleGetExpensesByDate = async (req, res, next) => {
     next(error);
   }
 };
+
+export const handleRemoveExpense = async (req, res, next) => {
+  const { expenseId } = req.params;
+  const user = req.user.user ? req.user.user : req.user;
+
+  try {
+    const existingExpense = await expenseCollection.findOne({
+      expense_id: expenseId,
+      brand_id: user?.brand_id,
+    });
+
+    if (!existingExpense) {
+      throw createError(404, "Expense not found");
+    }
+
+    const result = await expenseCollection.deleteOne({
+      expense_id: expenseId,
+      brand_id: user?.brand_id,
+    });
+
+    if (result?.deletedCount === 0) {
+      throw createError(500, "Something went wrong try again");
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Expense removed successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
