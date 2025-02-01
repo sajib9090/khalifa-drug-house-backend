@@ -40,6 +40,7 @@ import {
 import {
   handleAddExpense,
   handleGetExpensesByDate,
+  handleRemoveExpense,
 } from "../controllers/expenseController.js";
 
 export const apiRouter = express.Router();
@@ -116,3 +117,8 @@ apiRouter.get("/purchase-invoices", isLoggedIn, handleGetPurchaseInvoices);
 //expense
 apiRouter.post("/expenses/expense-create", isLoggedIn, handleAddExpense);
 apiRouter.get("/expenses", isLoggedIn, handleGetExpensesByDate);
+apiRouter.delete(
+  "/expenses/delete-expense/:expenseId",
+  isLoggedIn,
+  handleRemoveExpense
+);
