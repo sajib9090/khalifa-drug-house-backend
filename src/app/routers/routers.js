@@ -37,6 +37,10 @@ import {
   handleGetPurchaseInvoices,
   handleGetSinglePurchaseInvoice,
 } from "../controllers/purchaseControllers.js";
+import {
+  handleAddExpense,
+  handleGetExpensesByDate,
+} from "../controllers/expenseController.js";
 
 export const apiRouter = express.Router();
 
@@ -108,3 +112,7 @@ apiRouter.get(
   handleGetSinglePurchaseInvoice
 );
 apiRouter.get("/purchase-invoices", isLoggedIn, handleGetPurchaseInvoices);
+
+//expense
+apiRouter.post("/expenses/expense-create", isLoggedIn, handleAddExpense);
+apiRouter.get("/expenses", isLoggedIn, handleGetExpensesByDate);
