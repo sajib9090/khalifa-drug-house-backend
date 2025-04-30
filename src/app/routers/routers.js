@@ -42,6 +42,15 @@ import {
   handleGetExpensesByDate,
   handleRemoveExpense,
 } from "../controllers/expenseController.js";
+import { sendSms } from "../controllers/smsController.js";
+import {
+  handleAddCustomerSupplier,
+  handleAddTransaction,
+  handleGetCustomerAndSupplier,
+  handleGetSingleCustomerAndSupplier,
+  handleRemoveCustomerOrSupplier,
+  handleRemoveTransaction,
+} from "../controllers/customerSupplierController.js";
 
 export const apiRouter = express.Router();
 
@@ -121,4 +130,39 @@ apiRouter.delete(
   "/expenses/delete-expense/:expenseId",
   isLoggedIn,
   handleRemoveExpense
+);
+
+// sms
+apiRouter.post("/sms/send-sms", sendSms);
+
+// customer and supplier
+apiRouter.post(
+  "/customers-and-suppliers/add",
+  isLoggedIn,
+  handleAddCustomerSupplier
+);
+apiRouter.get(
+  "/customers-and-suppliers/get",
+  isLoggedIn,
+  handleGetCustomerAndSupplier
+);
+apiRouter.get(
+  "/customers-and-suppliers/get/:id",
+  isLoggedIn,
+  handleGetSingleCustomerAndSupplier
+);
+apiRouter.post(
+  "/customers-and-suppliers/add-transaction",
+  isLoggedIn,
+  handleAddTransaction
+);
+apiRouter.delete(
+  "/customers-and-suppliers/delete/:id",
+  isLoggedIn,
+  handleRemoveCustomerOrSupplier
+);
+apiRouter.delete(
+  "/customers-and-suppliers/transaction/:id",
+  isLoggedIn,
+  handleRemoveTransaction
 );

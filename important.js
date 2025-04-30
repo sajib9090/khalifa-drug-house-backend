@@ -7,4 +7,15 @@ const jwtSecret = process.env.JWT_SECRET;
 const jwtAccessToken = process.env.JWT_ACCESS_KEY;
 const jwtRefreshToken = process.env.JWT_REFRESH_KEY;
 
-export { port, mongoDB_URI, jwtSecret, jwtAccessToken, jwtRefreshToken };
+const smsApiKey = process.env.SMS_API_KEY;
+const smsSenderId = process.env.SMS_SENDER_ID;
+
+export {
+  port,
+  mongoDB_URI,
+  jwtSecret,
+  jwtAccessToken,
+  jwtRefreshToken,
+  smsApiKey,
+  smsSenderId,
+};

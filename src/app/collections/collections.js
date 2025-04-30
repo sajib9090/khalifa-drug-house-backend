@@ -15,3 +15,10 @@ export const soldInvoicesCollection = client
   .collection("sold-invoices");
 export const purchaseCollection = client.db(db_name).collection("purchase");
 export const expenseCollection = client.db(db_name).collection("expenses");
+export const customerAndSupplierCollection = client
+  .db(db_name)
+  .collection("customerAndSupplier");
+export const transactionCollection = client
+  .db(db_name)
+  .collection("transactions");
+export const dueDepositCollection = client.db(db_name).collection("dueDeposit");
